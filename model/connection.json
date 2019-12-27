@@ -1,0 +1,23 @@
+{
+  "production": {
+    "url": "",
+    "port": "",
+    "db": "",
+    "user": "",
+    "password": ""
+  },
+  "development": {
+    "url": "localhost",
+    "port": "27017",
+    "db": "fstack",
+    "user": "",
+    "password": ""
+  },
+  "test": {
+    "url": "localhost",
+    "port": "27017",
+    "db": "fstack",
+    "user": "",
+    "password": ""
+  }
+}
