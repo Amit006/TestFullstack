@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_","ns":"fstack.todos"}],"uuid":"53090c21c7d147a0b19455d554ab6a2e"}
