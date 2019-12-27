@@ -37,13 +37,26 @@ router.get('/posts/:id/comments', function(req, res, next) {
 });
 
 router.post("/posts", function (req, res, next) {
-  posts.addPosts({
+  var BodyObj = {
     title: req.body.title,
     body: req.body.body,
     userId: Number(req.body.userId)
-  }, (err, result) =>{
-    res.json(result);
-  })
+  };
+  let rules = {
+    id: 'required',
+    title: 'required',
+    body: 'required',
+    userId: 'required',
+  };
+  let validation = new Validator(BodyObj, rules);
+  if(validation.passes()){
+    posts.addPosts(BodyObj, (err, result) =>{
+      res.json(result);
+    })
+  } else {
+    res.json(' Please Spacify All The Paramiter')
+  }
+
 });
 router.put("/posts/:id", function (req, res, next) {
   var obj = JSON.parse(JSON.stringify(req.body));
