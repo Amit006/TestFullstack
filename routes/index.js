@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var posts = require("../model/posts");
 var comments = require("../model/comments");
+let Validator = require('validatorjs');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {

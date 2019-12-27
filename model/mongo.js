@@ -3,12 +3,12 @@ var MongoClient = require('mongodb').MongoClient;
 var connection = require('./connection.json').development;
 var assert = require('assert');
 function getdbUrl(){
-    var url = '';
-    if (connection.user.length == 0 || connection.user == ' ') {
-        url =  'mongodb://' + connection.url + ':' + connection.port + '/' + connection.db;
-    } else {
-        url = 'mongodb://' + connection.user + ':' + connection.password + '@' + connection.url + ':' + connection.port + '/' + connection.db;
-    }
+    var url = 'mongodb+srv://Frost006:MongoCode006@cluster0-imhnn.mongodb.net/test?retryWrites=true&w=majority';
+    // if (connection.user.length == 0 || connection.user == ' ') {
+    //     url =  'mongodb://' + connection.url + ':' + connection.port + '/' + connection.db;
+    // } else {
+    //     url = 'mongodb://' + connection.user + ':' + connection.password + '@' + connection.url + ':' + connection.port + '/' + connection.db;
+    // }
     return url;
 }
 function getdbPort(){

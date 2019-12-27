@@ -7,11 +7,11 @@
     "password": ""
   },
   "development": {
-    "url": "localhost",
+    "url": "cluster0-imhnn.mongodb.net",
     "port": "27017",
     "db": "fstack",
-    "user": "",
-    "password": ""
+    "user": "Frost006",
+    "password": "MongoCode006"
   },
   "test": {
     "url": "localhost",
@@ -21,3 +21,5 @@
     "password": ""
   }
 }
+
+
