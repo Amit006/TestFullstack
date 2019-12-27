@@ -6,35 +6,14 @@ var jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
 
-var addPosts = function (Posts, callback) {
-    console.log(' Posts: addPosts ', Posts);
 
-    mongo.licence.findOne({ _id: Posts._id}).then( ( resData, errfind) => {
-        // console.log(' Posts.Order_Number: ', Posts._id, ' resData: ', resData, ' errfind: ', errfind);
-
-        if (errfind) {
-            return callback({ msg: "Some Error Ocurred FindLicence "}, null);;
-        }
-
-        if(resData){
-            console.log(' from here');
-            callback({msg: " Licence already exist.", Product_Key: resData.Product_Key} , null);
-        } else {
-            console.log(' Licence: ---', Posts);
-            mongo.posts.insertOne(Posts.data, function (err, data) {
-                console.log(' err: ', err, ' result-data: ', data.ops[0]);
-
-                if (err) {
-                    return callback({msg: ' Error Occurred  '+ err.message }, null);
-                }
-
-                callback(null,{ n: data.result.n, insertedCount: data.insertedCount , ops: data.ops[0]});
-            });
-        }
-    });
-};
 var getAllPosts = function (callback) {
-    mongo.posts.find({}).toArray((  err, result) => {
+    mongo.posts.find({ status: false}).project({
+        userId: 1,
+        id: 1,
+        title: 1,
+        body: 1
+    }).toArray((  err, result) => {
         console.log(' result: ', result, ' err: ', err);
         if (err) {
             callback(err);
@@ -51,7 +30,7 @@ var getAllPosts = function (callback) {
 };
 var getOnePost  = function ( idnum, callback) {
     console.log('id: ', idnum);
-    mongo.posts.findOne({ 'id' : Number(idnum)}).then((result, err) => {
+    mongo.posts.findOne({ 'id' : Number(idnum), status: false}).then((result, err) => {
         console.log(' result: ', result, ' err: ', err);
         if (err) {
             callback(err);
@@ -66,7 +45,7 @@ var getOnePost  = function ( idnum, callback) {
         callback(null, result);
     });
 };
-var getPostAllCommands  = function ( idnum, callback) {
+var getPostAllCommands = function ( idnum, callback) {
     console.log('id: ', idnum);
     mongo.comments.find({ 'postId' : Number(idnum)}).toArray(( err, result) => {
         console.log(' result: ', result, ' err: ', err);
@@ -84,8 +63,7 @@ var getPostAllCommands  = function ( idnum, callback) {
     });
 };
 var getPostAllUsers  = function ( idnum, callback) {
-    console.log('id: ', idnum);
-    mongo.posts.find({ 'userId' : Number(idnum)}).toArray(( err, result) => {
+    mongo.posts.find({ 'userId' : Number(idnum), status: false}).toArray(( err, result) => {
         console.log(' result: ', result, ' err: ', err);
         if (err) {
             callback(err);
@@ -101,10 +79,65 @@ var getPostAllUsers  = function ( idnum, callback) {
     });
 };
 
+// All POST REQUEST
+var addPosts = function (Posts, callback) {
+    mongo.posts.find().sort({'id':-1}).limit(1).toArray( (err, maxData) => {
+        Posts['id'] = maxData[0].id+1;
+        mongo.posts.insertOne(Posts, function (err, data) {
+            if (err) {
+                return callback({msg: ' Error Occurred  ' + err.message}, null);
+            }
+            delete data.ops[0]._id;
+            callback(null, data.ops[0]);
+        });
+    });
+};
+var updatePosts = function (condation, Posts, callback) {
+        mongo.posts.updateOne(Object.assign({ status: false}, condation), {
+            $set:Posts
+        },{},function (err, data) {
+            if (err) {
+                return callback({msg: ' Error Occurred  ' + err.message}, null);
+            }
+            callback(null, Posts);
+        });
+};
+var updatePostsPatch = function (condation, Posts, callback) {
+        mongo.posts.findOneAndUpdate( Object.assign(condation, { status: false}), {
+            $set:Posts
+        },{},function (err, data) {
+            console.log(' err: ', err, ' data: ', data);
+            if (err) {
+                return callback({msg: ' Error Occurred  ' + err.message}, null);
+            }
+            callback(null, {
+                userId: data.value.userId,
+                id: data.value.id,
+                title: Posts.title,
+                body: data.value.body
+            });
+        });
+};
+var updatePostsDelete = function (condation, Posts, callback) {
+        mongo.posts.findOneAndUpdate(condation, {
+            $set:Posts
+        },{},function (err, data) {
+            console.log(' err: ', err, ' data: ', data);
+            if (err) {
+                return callback({msg: ' Error Occurred  ' + err.message}, null);
+            }
+            callback(null,true);
+        });
+};
+
+
 module.exports = {
     addPosts: addPosts,
     getAllPosts: getAllPosts,
     getOnePost: getOnePost,
     getPostAllCommands: getPostAllCommands,
     getPostAllUsers: getPostAllUsers,
+    updatePosts: updatePosts,
+    updatePostsPatch: updatePostsPatch,
+    updatePostsDelete: updatePostsDelete,
 };

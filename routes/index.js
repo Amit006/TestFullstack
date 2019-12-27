@@ -14,7 +14,6 @@ router.get('/posts', function(req, res, next) {
   var userId = query.userId;
   if(userId) {
     posts.getPostAllUsers(userId,( err, resultData) => {
-      console.log(' result', resultData);
       res.json(resultData);
     });
   } else {
@@ -26,18 +25,99 @@ router.get('/posts', function(req, res, next) {
 });
 router.get('/posts/:id', function(req, res, next) {
   posts.getOnePost(req.params.id, ( err, resultData) => {
-    console.log(' result', resultData);
     res.json(resultData);
   });
 
 });
 router.get('/posts/:id/comments', function(req, res, next) {
   posts.getPostAllCommands(req.params.id, ( err, resultData) => {
-    console.log(' result', resultData);
     res.json(resultData);
   });
 
 });
+
+router.post("/posts", function (req, res, next) {
+  posts.addPosts({
+    title: req.body.title,
+    body: req.body.body,
+    userId: Number(req.body.userId)
+  }, (err, result) =>{
+    res.json(result);
+  })
+});
+router.put("/posts/:id", function (req, res, next) {
+  var obj = JSON.parse(JSON.stringify(req.body));
+  var postId  = Number(req.params.id);
+  var BodyObj = {
+    id: Number(obj.id),
+    title: obj.title,
+    body: obj.body,
+    userId: Number(obj.userId)
+  };
+  let rules = {
+    id: 'required',
+    title: 'required',
+    body: 'required',
+    userId: 'required',
+  };
+  let validation = new Validator(BodyObj, rules);
+  if(validation.passes()){
+    posts.updatePosts({
+      'id': postId
+    },{
+      id: Number(obj.id),
+      title: obj.title,
+      body: obj.body,
+      userId: Number(obj.userId)
+    }, (err, result) =>{
+      res.json(result);
+    })
+  } else{
+    res.json(" Please provide all value");
+  }
+
+});
+router.patch("/posts/:id", function (req, res, next) {
+  var obj = JSON.parse(JSON.stringify(req.body));
+  console.log(' Obj: ', obj);
+  var postId  = Number(req.params.id);
+  var BodyObj = {
+    id:postId,
+    title: obj.title
+  };
+
+  let rules = {
+    id: 'required',
+    title: 'required'
+  };
+  let validation = new Validator(BodyObj, rules);
+  if(validation.passes()){
+    posts.updatePostsPatch({
+      'id': postId
+    },{
+      title: obj.title,
+    }, (err, result) =>{
+      res.json(result);
+    })
+  } else {
+    res.json(' Please Provide title Value')
+  }
+
+
+});
+router.delete("/posts/:id", function (req, res, next) {
+  var obj = JSON.parse(JSON.stringify(req.body));
+  console.log(' Obj: ', obj);
+  var postId  = Number(req.params.id);
+  posts.updatePostsDelete({
+    'id': postId
+  },{
+    status: true,
+  }, (err, result) =>{
+    res.json(result);
+  })
+});
+
 router.get('/comments', function(req, res, next) {
   var query = require('url').parse(req.url,true).query;
   var postId = query.postId;
