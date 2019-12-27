@@ -96,12 +96,10 @@ router.patch("/posts/:id", function (req, res, next) {
   console.log(' Obj: ', obj);
   var postId  = Number(req.params.id);
   var BodyObj = {
-    id:postId,
     title: obj.title
   };
 
   let rules = {
-    id: 'required',
     title: 'required'
   };
   let validation = new Validator(BodyObj, rules);

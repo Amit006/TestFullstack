@@ -110,12 +110,13 @@ var updatePostsPatch = function (condation, Posts, callback) {
             if (err) {
                 return callback({msg: ' Error Occurred  ' + err.message}, null);
             }
-            callback(null, {
-                userId: data.value.userId,
-                id: data.value.id,
-                title: Posts.title,
-                body: data.value.body
-            });
+            var returnObj = data.value ? {
+                    userId: data.value.userId,
+                    id: data.value.id,
+                    title: Posts.title,
+                    body: data.value.body
+                } : { error : "allready deleted "}
+            callback(null, );
         });
 };
 var updatePostsDelete = function (condation, Posts, callback) {
