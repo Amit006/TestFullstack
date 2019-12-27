@@ -62,20 +62,21 @@ router.post("/posts", function (req, res, next) {
 router.put("/posts/:id", function (req, res, next) {
   var obj = JSON.parse(JSON.stringify(req.body));
   var postId  = Number(req.params.id);
-  var BodyObj = {
-    id: Number(obj.id),
-    title: obj.title,
-    body: obj.body,
-    userId: Number(obj.userId)
-  };
+
   let rules = {
     id: 'required',
     title: 'required',
     body: 'required',
     userId: 'required',
   };
-  let validation = new Validator(BodyObj, rules);
+  let validation = new Validator(BodyObj, obj);
   if(validation.passes()){
+    var BodyObj = {
+      id: Number(obj.id),
+      title: obj.title,
+      body: obj.body,
+      userId: Number(obj.userId)
+    };
     posts.updatePosts({
       'id': postId
     },{
