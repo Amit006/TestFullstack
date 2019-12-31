@@ -3,7 +3,7 @@ var guid = require('guid');
 var ObjectId = require('mongodb').ObjectID;
 var mongo = require('./mongo');
 var jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
+
 
 var addcomments = function (comments, callback) {
     console.log(' comments: addcomments ', comments);

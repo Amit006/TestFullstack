@@ -3,7 +3,6 @@ var guid = require('guid');
 var ObjectId = require('mongodb').ObjectID;
 var mongo = require('./mongo');
 var jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
 
 
 
